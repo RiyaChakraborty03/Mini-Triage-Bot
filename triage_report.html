@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Triage Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .section { margin: 20px 0; padding: 15px; border-left: 4px solid #007bff; }
+        .log-analysis { border-left-color: #28a745; }
+        .image-analysis { border-left-color: #ffc107; }
+        .confidence { font-size: 18px; font-weight: bold; color: #dc3545; }
+        h1 { color: #333; }
+        h2 { color: #555; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Mini-Triage Bot Analysis Report</h1>
+        
+        <div class="section log-analysis">
+            <h2>Log Analysis</h2>
+            <p>• The API endpoint /users returned a 500 error due to a null pointer exception in the database query
+• The issue is a code bug - specifically in the data validation layer</p>
+        </div>
+        
+        <div class="section image-analysis">
+            <h2>Visual Analysis</h2>
+            <p>The screenshot shows a 500 error page with broken CSS styling. The button text is cut off and the error message is partially obscured.</p>
+        </div>
+        
+        <div class="section">
+            <h2>Confidence Score</h2>
+            <p class="confidence">AI Confidence: 85% - This is likely a reproducible bug</p>
+        </div>
+    </div>
+</body>
+</html>
