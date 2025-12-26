@@ -1,0 +1,11 @@
+Error Trace:
+AssertionError: Expected button 'Submit' to be clickable, but it was hidden by an overlay.
+    at LoginPage.submitForm (pages/login_page.py:42)
+    at TestLogin.test_user_can_login (tests/test_auth.py:15)
+
+Stack Trace:
+Traceback (most recent call last):
+  File "tests/test_auth.py", line 15, in test_user_can_login
+    login_page.submit_form()
+  File "pages/login_page.py", line 42, in submit_form
+    raise AssertionError("Element <button id='submit'> is not clickable at point (450, 600) because another element <div id='loading_spinner'> obscures it.")
