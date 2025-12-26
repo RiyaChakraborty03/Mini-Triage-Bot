@@ -7,6 +7,10 @@ import os
 import sys
 import json
 from datetime import datetime
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 def print_banner():
     """Print the application banner"""
@@ -173,45 +177,64 @@ def configure_api_key():
     print("\n" + "="*60)
     print("CONFIGURE API KEY")
     print("="*60)
+    
+    current_key = os.getenv("GEMINI_API_KEY", "Not set")
+    print(f"\nCurrent Key Status: {('CONFIGURED' if current_key != 'Not set' else 'NOT CONFIGURED')}")
+    
     print("""
-Current Key: AIzaSyDWGWBt5Y1Uabv9oT7fUW6RIDhu6Bs98tI
+To get a new API key:
+1. Go to: https://ai.google.dev/
+2. Click "Create API key"
+3. Copy it immediately
 
-To change the API key:
-1. Get your key from: https://ai.google.dev/
-2. Update in triage_bot.py (line 18)
-3. Update in triage_bot_advanced.py (line 18)
+Professional Setup (You're Already Using This!):
+- Your key is stored in .env file (secure)
+- Never exposed in your code (professional!)
+- Not committed to version control
+- This is how real engineers do it!
 
 IMPORTANT: Keep your API key secret!
 - Don't share publicly
-- Don't commit to version control
-- Use environment variables in production
+- Don't paste in chat or screenshots
+- Don't commit .env to git
     """)
     
-    choice = input("Edit API key now? (y/n): ").lower()
+    choice = input("Update API key in .env file? (y/n): ").lower()
     if choice == 'y':
-        new_key = input("Enter new API key: ").strip()
+        new_key = input("Paste your NEW API key: ").strip()
         if new_key:
-            # Update both files
-            for script in ["triage_bot.py", "triage_bot_advanced.py"]:
-                try:
-                    with open(script, 'r') as f:
+            try:
+                # Read current .env content
+                env_path = ".env"
+                if os.path.exists(env_path):
+                    with open(env_path, 'r') as f:
                         content = f.read()
+                    # Replace the key
+                    lines = content.split('\n')
+                    updated_lines = []
+                    for line in lines:
+                        if line.startswith('GEMINI_API_KEY='):
+                            updated_lines.append(f'GEMINI_API_KEY={new_key}')
+                        else:
+                            updated_lines.append(line)
                     
-                    old_line = 'YOUR_API_KEY = "AIzaSyDWGWBt5Y1Uabv9oT7fUW6RIDhu6Bs98tI"'
-                    new_line = f'YOUR_API_KEY = "{new_key}"'
-                    content = content.replace(old_line, new_line)
-                    
-                    # Also update the genai.configure line
-                    old_config = 'genai.configure(api_key="AIzaSyDWGWBt5Y1Uabv9oT7fUW6RIDhu6Bs98tI")'
-                    new_config = f'genai.configure(api_key="{new_key}")'
-                    content = content.replace(old_config, new_config)
-                    
-                    with open(script, 'w') as f:
-                        f.write(content)
-                    
-                    print(f"✓ Updated {script}")
-                except Exception as e:
-                    print(f"✗ Error updating {script}: {e}")
+                    with open(env_path, 'w') as f:
+                        f.write('\n'.join(updated_lines))
+                else:
+                    # Create .env if it doesn't exist
+                    with open(env_path, 'w') as f:
+                        f.write(f'GEMINI_API_KEY={new_key}\n')
+                
+                print(f"\nSUCCESS!")
+                print(f"Your API key has been saved to .env file")
+                print(f"The key is now secure and not exposed in your code!")
+                
+            except Exception as e:
+                print(f"Error updating .env: {e}")
+        else:
+            print("No key entered.")
+    else:
+        print("Skipped.")
 
 def main():
     """Main interactive loop"""

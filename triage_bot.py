@@ -1,24 +1,32 @@
-import google.generativeai as genai
+from google import genai
 import os
 from PIL import Image
 import time
 import json
 import sys
+from dotenv import load_dotenv
+
+# Load API key from .env file (secure, not exposed in code)
+load_dotenv()
+api_key = os.getenv("GEMINI_API_KEY")
+
+if not api_key:
+    print("ERROR: GEMINI_API_KEY not found in .env file!")
+    print("Please create a .env file with your API key.")
+    sys.exit(1)
 
 # Fix Windows encoding for emoji support
 if sys.platform == 'win32':
     import io
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-# 1. Setup the AI (Paste your key here)
-YOUR_API_KEY = "AIzaSyDWGWBt5Y1Uabv9oT7fUW6RIDhu6Bs98tI"
-genai.configure(api_key="AIzaSyDWGWBt5Y1Uabv9oT7fUW6RIDhu6Bs98tI")
-model = genai.GenerativeModel('gemini-2.0-flash')
+# Setup the AI client with the secure API key
+client = genai.Client(api_key=api_key)
 
 # 2. Path to your files
 LOG_PATH = "logs/fail_log.txt"
 IMAGE_PATH = "logs/faliure.png"
-DEMO_MODE = False  # Set to True to see mock output without API calls
+DEMO_MODE = True  # Set to True to see mock output without API calls
 
 def read_error_log():
     """Read the error log file"""
@@ -91,8 +99,9 @@ def analyze_nightly_failure():
         if DEMO_MODE:
             text_response = "• The API endpoint /users returned a 500 error due to a null pointer exception in the database query\n• The issue is a code bug - specifically in the data validation layer"
         else:
-            response = model.generate_content(
-                f"You are a Senior QA Engineer. Analyze this error log and explain in 2 bullet points: "
+            response = client.models.generate_content(
+                model='gemini-2.0-flash',
+                contents=f"You are a Senior QA Engineer. Analyze this error log and explain in 2 bullet points: "
                 f"1. What failed? 2. Is it a code bug or environmental issue?\n\nError: {error_text}"
             )
             text_response = response.text
@@ -107,8 +116,9 @@ def analyze_nightly_failure():
                     image_response = "The screenshot shows a 500 error page with broken CSS styling. The button text is cut off and the error message is partially obscured."
                 else:
                     sample_file = Image.open(IMAGE_PATH)
-                    response = model.generate_content(
-                        ["Look at this UI failure screenshot. Tell me in 2 sentences what visual elements are broken or missing.", sample_file]
+                    response = client.models.generate_content(
+                        model='gemini-2.0-flash',
+                        contents=["Look at this UI failure screenshot. Tell me in 2 sentences what visual elements are broken or missing.", sample_file]
                     )
                     image_response = response.text
                 

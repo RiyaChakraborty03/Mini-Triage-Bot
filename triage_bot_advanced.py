@@ -3,22 +3,30 @@ Advanced Mini-Triage Bot
 Automates log analysis and screenshot review using Google Gemini AI
 """
 
-import google.generativeai as genai
+from google import genai
 import os
 from PIL import Image
 import json
 import sys
 from datetime import datetime
+from dotenv import load_dotenv
+
+# Load API key from .env file (secure, not exposed in code)
+load_dotenv()
+api_key = os.getenv("GEMINI_API_KEY")
+
+if not api_key:
+    print("ERROR: GEMINI_API_KEY not found in .env file!")
+    print("Please create a .env file with your API key.")
+    sys.exit(1)
 
 # Fix Windows encoding for emoji support
 if sys.platform == 'win32':
     import io
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-# 1. Setup the AI
-YOUR_API_KEY = "AIzaSyDWGWBt5Y1Uabv9oT7fUW6RIDhu6Bs98tI"
-genai.configure(api_key=YOUR_API_KEY)
-model = genai.GenerativeModel('gemini-2.0-flash')
+# Setup the AI client with the secure API key
+client = genai.Client(api_key=api_key)
 
 DEMO_MODE = False  # Set to True for testing without API calls
 LOGS_DIR = "logs"
@@ -51,8 +59,9 @@ def analyze_log(error_text):
         return "Demo analysis: The API endpoint returned a 500 error due to null pointer exception. This is a code bug in the data validation layer."
     
     try:
-        response = model.generate_content(
-            f"""You are an expert QA Engineer. Analyze this error log in 3-4 sentences:
+        response = client.models.generate_content(
+            model='gemini-2.0-flash',
+            contents=f"""You are an expert QA Engineer. Analyze this error log in 3-4 sentences:
             1. What specifically failed?
             2. Is it a code bug or environmental/infrastructure issue?
             3. What is the severity (Critical/High/Medium/Low)?
@@ -76,8 +85,9 @@ def analyze_image(image_path):
     
     try:
         image = Image.open(image_path)
-        response = model.generate_content(
-            ["""You are a UI/UX expert. Analyze this failed test screenshot in 2-3 sentences:
+        response = client.models.generate_content(
+            model='gemini-2.0-flash',
+            contents=["""You are a UI/UX expert. Analyze this failed test screenshot in 2-3 sentences:
             1. What visual elements are broken or missing?
             2. What is the likely root cause?
             3. How would you describe the severity of the UI failure?""", image]
