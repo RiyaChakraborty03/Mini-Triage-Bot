@@ -2,36 +2,2981 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Triage Report</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Triage Report - 2026-01-03 01:56</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .container { max-width: 800px; margin: 0 auto; }
-        .section { margin: 20px 0; padding: 15px; border-left: 4px solid #007bff; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { 
+            max-width: 1000px; 
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 { font-size: 28px; margin-bottom: 5px; }
+        .header p { opacity: 0.9; font-size: 14px; }
+        .alert-bar {
+            background: #dc3545;
+            color: white;
+            padding: 15px 30px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .content { padding: 30px; }
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .metric {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 4px solid #667eea;
+        }
+        .metric h3 { font-size: 12px; color: #666; margin-bottom: 8px; }
+        .metric .value { font-size: 24px; font-weight: bold; color: #333; }
+        .section { 
+            margin: 20px 0; 
+            padding: 20px; 
+            border-left: 5px solid #667eea;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        .section h2 { 
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        .section p, .section ul { 
+            color: #555;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .section ul { margin-left: 20px; }
+        .section li { margin-bottom: 8px; }
         .log-analysis { border-left-color: #28a745; }
         .image-analysis { border-left-color: #ffc107; }
-        .confidence { font-size: 18px; font-weight: bold; color: #dc3545; }
-        h1 { color: #333; }
-        h2 { color: #555; }
+        .error-summary { border-left-color: #dc3545; }
+        .confidence { 
+            font-size: 36px; 
+            font-weight: bold; 
+            color: green;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .recommendation {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            border: 2px solid green;
+        }
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+            border-top: 2px solid #eee;
+        }
+        h4 { color: #667eea; margin: 15px 0 10px 0; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Mini-Triage Bot Analysis Report</h1>
-        
-        <div class="section log-analysis">
-            <h2>Log Analysis</h2>
-            <p>• The API endpoint /users returned a 500 error due to a null pointer exception in the database query
-• The issue is a code bug - specifically in the data validation layer</p>
+        <div class="header">
+            <h1>🔍 Nightly Regression Triage Report</h1>
+            <p>Automated AI-Powered Analysis | 2026-01-03 01:56:18</p>
         </div>
         
-        <div class="section image-analysis">
-            <h2>Visual Analysis</h2>
-            <p>The screenshot shows a 500 error page with broken CSS styling. The button text is cut off and the error message is partially obscured.</p>
+        <div class="alert-bar">
+            Severity: Critical | Confidence: 90%
         </div>
         
-        <div class="section">
-            <h2>Confidence Score</h2>
-            <p class="confidence">AI Confidence: 85% - This is likely a reproducible bug</p>
+        <div class="content">
+            <div class="metrics">
+                <div class="metric">
+                    <h3>Confidence</h3>
+                    <div class="value" style="color: green;">90%</div>
+                </div>
+                <div class="metric">
+                    <h3>Severity</h3>
+                    <div class="value" style="color: #dc3545;">Critical</div>
+                </div>
+                <div class="metric">
+                    <h3>Exceptions</h3>
+                    <div class="value">1</div>
+                </div>
+                <div class="metric">
+                    <h3>Stack Traces</h3>
+                    <div class="value">0</div>
+                </div>
+            </div>
+            
+            <div class="section error-summary">
+                <h2>📋 Error Summary</h2>
+                <h4>Top Exceptions:</h4><ul><li><strong>Error:</strong> Expected button 'Submit' to be clickable, but it was hidden by an overlay.</li></ul><h4>Failed Tests:</h4><ul><li>Sections Found: 1</li><li>Original Size: 568 chars</li><li>CONTEXT 1] Line 1 of 11</li></ul>
+            </div>
+            
+            <div class="section log-analysis">
+                <h2>🤖 AI Log Analysis</h2>
+                <p>## Regression# Regression Test# Regression Test Failure Analysis
+
+## # Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test faile# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obsc# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempte# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeare# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Fl# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness /# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** cause# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequ# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div## Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+-# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduce# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passe# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchron# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+-# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting en# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users,# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1.# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Ad# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait**# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invis# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, # Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**:# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**: Check if UI# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**: Check if UI code# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**: Check if UI code recently# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**: Check if UI code recently adde# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**: Check if UI code recently added async loading behavior that wasn# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**: Check if UI code recently added async loading behavior that wasn't acc# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**: Check if UI code recently added async loading behavior that wasn't accounted for in the page# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**: Check if UI code recently added async loading behavior that wasn't accounted for in the page object# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**: Check if UI code recently added async loading behavior that wasn't accounted for in the page object
+
+3. **Review# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**: Check if UI code recently added async loading behavior that wasn't accounted for in the page object
+
+3. **Review test stability# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**: Check if UI code recently added async loading behavior that wasn't accounted for in the page object
+
+3. **Review test stability**: Run# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**: Check if UI code recently added async loading behavior that wasn't accounted for in the page object
+
+3. **Review test stability**: Run the test # Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**: Check if UI code recently added async loading behavior that wasn't accounted for in the page object
+
+3. **Review test stability**: Run the test 10# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**: Check if UI code recently added async loading behavior that wasn't accounted for in the page object
+
+3. **Review test stability**: Run the test 10+# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**: Check if UI code recently added async loading behavior that wasn't accounted for in the page object
+
+3. **Review test stability**: Run the test 10+ times locally# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**: Check if UI code recently added async loading behavior that wasn't accounted for in the page object
+
+3. **Review test stability**: Run the test 10+ times locally to confirm# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**: Check if UI code recently added async loading behavior that wasn't accounted for in the page object
+
+3. **Review test stability**: Run the test 10+ times locally to confirm the# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**: Check if UI code recently added async loading behavior that wasn't accounted for in the page object
+
+3. **Review test stability**: Run the test 10+ times locally to confirm the fix# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**: Check if UI code recently added async loading behavior that wasn't accounted for in the page object
+
+3. **Review test stability**: Run the test 10+ times locally to confirm the fix elimin# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**: Check if UI code recently added async loading behavior that wasn't accounted for in the page object
+
+3. **Review test stability**: Run the test 10+ times locally to confirm the fix eliminates fl# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**: Check if UI code recently added async loading behavior that wasn't accounted for in the page object
+
+3. **Review test stability**: Run the test 10+ times locally to confirm the fix eliminates flak# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**: Check if UI code recently added async loading behavior that wasn't accounted for in the page object
+
+3. **Review test stability**: Run the test 10+ times locally to confirm the fix eliminates flakiness
+
+4# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**: Check if UI code recently added async loading behavior that wasn't accounted for in the page object
+
+3. **Review test stability**: Run the test 10+ times locally to confirm the fix eliminates flakiness
+
+4. **Consider# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**: Check if UI code recently added async loading behavior that wasn't accounted for in the page object
+
+3. **Review test stability**: Run the test 10+ times locally to confirm the fix eliminates flakiness
+
+4. **Consider adding# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**: Check if UI code recently added async loading behavior that wasn't accounted for in the page object
+
+3. **Review test stability**: Run the test 10+ times locally to confirm the fix eliminates flakiness
+
+4. **Consider adding**:# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**: Check if UI code recently added async loading behavior that wasn't accounted for in the page object
+
+3. **Review test stability**: Run the test 10+ times locally to confirm the fix eliminates flakiness
+
+4. **Consider adding**: Explicit# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**: Check if UI code recently added async loading behavior that wasn't accounted for in the page object
+
+3. **Review test stability**: Run the test 10+ times locally to confirm the fix eliminates flakiness
+
+4. **Consider adding**: Explicit wa# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**: Check if UI code recently added async loading behavior that wasn't accounted for in the page object
+
+3. **Review test stability**: Run the test 10+ times locally to confirm the fix eliminates flakiness
+
+4. **Consider adding**: Explicit waits as# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**: Check if UI code recently added async loading behavior that wasn't accounted for in the page object
+
+3. **Review test stability**: Run the test 10+ times locally to confirm the fix eliminates flakiness
+
+4. **Consider adding**: Explicit waits as a standar# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**: Check if UI code recently added async loading behavior that wasn't accounted for in the page object
+
+3. **Review test stability**: Run the test 10+ times locally to confirm the fix eliminates flakiness
+
+4. **Consider adding**: Explicit waits as a standard pattern# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**: Check if UI code recently added async loading behavior that wasn't accounted for in the page object
+
+3. **Review test stability**: Run the test 10+ times locally to confirm the fix eliminates flakiness
+
+4. **Consider adding**: Explicit waits as a standard pattern across# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**: Check if UI code recently added async loading behavior that wasn't accounted for in the page object
+
+3. **Review test stability**: Run the test 10+ times locally to confirm the fix eliminates flakiness
+
+4. **Consider adding**: Explicit waits as a standard pattern across all page# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**: Check if UI code recently added async loading behavior that wasn't accounted for in the page object
+
+3. **Review test stability**: Run the test 10+ times locally to confirm the fix eliminates flakiness
+
+4. **Consider adding**: Explicit waits as a standard pattern across all page objects to prevent similar issues# Regression Test Failure Analysis
+
+## 1. SUMMARY
+The login test failed because the Submit button was not clickable due to a loading spinner overlay obscuring it at coordinates (450, 600). The test attempted to click the Submit button before the loading spinner disappeared, resulting in an AssertionError during the form submission step.
+
+## 2. ROOT CAUSE
+**Test Flakiness / Timing Issue**
+
+This is most likely a **race condition** caused by inadequate wait conditions in the test code. The loading spinner (`div#loading_spinner`) is still visible when the test attempts to interact with the Submit button, indicating:
+- Missing or insufficient explicit wait for the spinner to disappear
+- Possible recent UI changes that introduced async loading behavior
+- The test may have previously passed due to timing luck rather than proper synchronization
+
+## 3. SEVERITY
+**MEDIUM**
+
+**Justification:**
+- Blocks regression testing for login functionality (critical user flow)
+- Does not indicate a production bug—likely a test implementation issue
+- Can be quickly resolved with proper wait conditions
+- Not affecting end users, only CI/CD pipeline reliability
+
+## 4. RECOMMENDATION
+
+**Immediate Actions:**
+1. **Add explicit wait** in `login_page.py:42` before clicking Submit:
+   ```python
+   wait.until(EC.invisibility_of_element_located((By.ID, 'loading_spinner')))
+   wait.until(EC.element_to_be_clickable((By.ID, 'submit')))
+   ```
+
+2. **Verify recent changes**: Check if UI code recently added async loading behavior that wasn't accounted for in the page object
+
+3. **Review test stability**: Run the test 10+ times locally to confirm the fix eliminates flakiness
+
+4. **Consider adding**: Explicit waits as a standard pattern across all page objects to prevent similar issues</p>
+            </div>
+            
+            <div class="section image-analysis">
+                <h2>🖼️ Visual Analysis</h2>
+                <p>Screenshot captured: 1200x587 pixels, PNG
+
+Note: Image analysis not fully supported via Cody API. Screenshot saved for manual review. Visible elements suggest UI error page with stack trace.</p>
+            </div>
+            
+            <div class="section">
+                <h2>📊 Confidence Assessment</h2>
+                <div class="confidence">90%</div>
+                <div class="recommendation">
+                    <strong>Recommendation:</strong> 
+                    This is likely a reproducible bug requiring immediate attention.
+                </div>
+            </div>
+            
+            <div class="footer">
+                <p><strong>Log File:</strong> logs/fail_log.txt</p>
+                <p><strong>Screenshot:</strong> logs/faliure.png</p>
+                <p><strong>Analysis Mode:</strong> LIVE API</p>
+                <p style="margin-top: 10px;">Mini-Triage Bot v2.0 | Powered by Sourcegraph Cody AI</p>
+            </div>
         </div>
     </div>
 </body>
