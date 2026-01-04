@@ -1,6 +1,6 @@
 """
 Advanced Mini-Triage Bot - Production Ready
-Automates nightly regression log analysis using Sourcegraph Cody AI
+Automates nightly regression log analysis using Sourcegraph Cody API
 Handles multiple log files, batch processing, and detailed reporting
 """
 
@@ -37,7 +37,7 @@ HEADERS = {
     "Content-Type": "application/json"
 }
 
-DEMO_MODE = False  # Set to True for testing without API calls
+# Configuration constants
 LOGS_DIR = "logs"
 REPORTS_DIR = "reports"
 ARCHIVE_DIR = "reports/archive"
@@ -90,7 +90,7 @@ def call_cody_api(prompt, retry_count=0):
         response.raise_for_status()
         
         # Collect streamed response
-        full_response = ""
+        latest_response = ""
         for line in response.iter_lines():
             if line:
                 decoded_line = line.decode('utf-8')
@@ -100,10 +100,14 @@ def call_cody_api(prompt, retry_count=0):
                         try:
                             chunk = json.loads(data)
                             if 'completion' in chunk:
-                                full_response += chunk['completion']
+                                #store complete response instead of incremental chunks
+                                latest_response = chunk['completion']
                         except json.JSONDecodeError:
                             continue
         
+        # Use latest response which contains the full text
+        full_response = latest_response
+
         if not full_response.strip():
             raise Exception("Empty response from API")
             
@@ -125,6 +129,56 @@ def call_cody_api(prompt, retry_count=0):
     except Exception as e:
         logger.log("ERROR", f"Unexpected error: {str(e)}")
         return f"Error: {str(e)}"
+    
+def health_check_api(timeout=5):
+    """Lightweight health check for the Cody API"""
+    try:
+        payload = {
+            "messages": [
+                {
+                    "speaker": "human",
+                    "text": "Health check: Respond with 'OK' if you receive this."
+                }
+            ],
+            "maxTokensToSample": 10,  # Minimal tokens for health check
+            "temperature": 0.1
+        }
+        
+        response = requests.post(
+            CODY_API_URL, 
+            headers=HEADERS, 
+            json=payload, 
+            stream=False,  # No streaming for health check
+            timeout=timeout  # Shorter timeout
+        )
+        
+        if response.status_code == 200:
+            return True, "API is operational"
+        else:
+            return False, f"API returned status code: {response.status_code}"
+            
+    except requests.exceptions.Timeout:
+        return False, "API timeout during health check"
+        
+    except requests.exceptions.RequestException as e:
+        return False, f"API request failed: {str(e)}"
+        
+    except Exception as e:
+        return False, f"Unexpected error: {str(e)}"
+    
+def handle_uploaded_files(log_file_path, image_file_path=None):
+    """Process uploaded files from the API"""
+    logger.log("INFO", f"Processing uploaded files: {log_file_path}")
+    
+    # Ensure the file exists
+    if not os.path.exists(log_file_path):
+        return {
+            'error': f"Uploaded log file not found at {log_file_path}",
+            'status': 'failed'
+        }
+    
+    # Call the standard triage function with the uploaded paths
+    return run_triage(log_file=log_file_path, image_file=image_file_path)
 
 def extract_error_patterns(log_text):
     """Extract common error patterns from logs"""
@@ -211,14 +265,6 @@ def get_confidence_score(text, error_patterns):
 
 def analyze_log(error_text, log_filename):
     """Analyze error log text with enhanced prompting"""
-    if DEMO_MODE:
-        return {
-            'summary': "Demo analysis: The API endpoint returned a 500 error due to null pointer exception.",
-            'root_cause': "Code bug in the data validation layer",
-            'severity': "High",
-            'recommendation': "Fix null pointer handling in validation code"
-        }
-    
     try:
         # Extract error patterns first
         error_patterns = extract_error_patterns(error_text)
@@ -282,7 +328,12 @@ def extract_section(text, section_name):
 def analyze_image(image_path):
     """Analyze failure screenshot with metadata"""
     if not os.path.exists(image_path):
-        return None
+        logger.log("WARNING", f"Image file not found at: {image_path}")
+        return {
+            'analysis': f"No screenshot found at {image_path}. Please check if the image exists and is saved with the correct name.",
+            'metadata': {'status': 'not_found'},
+            'suggestion': "Check if screenshot was saved correctly. For best results, name your screenshot 'failure.png'."
+        }
     
     try:
         img = Image.open(image_path)
@@ -293,22 +344,19 @@ def analyze_image(image_path):
             'file_size': os.path.getsize(image_path)
         }
         
-        if DEMO_MODE:
-            return {
-                'analysis': "Demo: Screenshot shows 500 error page with broken CSS styling",
-                'metadata': metadata
-            }
-        
-        # Note: Cody API has limited image analysis
         return {
-            'analysis': "Image analysis not fully supported via Cody API. Manual review recommended.",
+            'analysis': f"Screenshot information extracted successfully. Basic metadata analysis shows this is a {img.format} image of size {img.size[0]}x{img.size[1]} pixels.",
             'metadata': metadata,
-            'note': "Screenshot captured and stored for manual review"
+            'note': "For detailed visual analysis, please review the screenshot manually."
         }
         
     except Exception as e:
         logger.log("ERROR", f"Error analyzing image: {str(e)}")
-        return None
+        return {
+            'analysis': f"Error analyzing image: {str(e)}",
+            'metadata': {'status': 'error'},
+            'suggestion': "The image file may be corrupted or in an unsupported format. Try using PNG or JPG files."
+        }
 
 def generate_json_report(analysis, image_analysis, confidence_score, log_file, image_file):
     """Generate comprehensive JSON report"""
@@ -319,7 +367,7 @@ def generate_json_report(analysis, image_analysis, confidence_score, log_file, i
             "timestamp": timestamp,
             "report_version": "2.0",
             "triage_bot_version": "1.0-production",
-            "analysis_mode": "DEMO" if DEMO_MODE else "LIVE"
+            "analysis_mode": "LIVE"
         },
         "files": {
             "log_file": log_file,
@@ -407,7 +455,19 @@ def generate_next_steps(analysis):
 
 def generate_html_report(analysis, image_analysis, confidence_score, log_file, image_file):
     """Generate production-quality HTML report"""
-    log_safe = analysis.get('full_response', 'No analysis').replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
+    # Format all text sections, not just the full response
+    log_safe = format_ai_response(analysis.get('full_response', 'No analysis'))
+    summary = format_ai_response(analysis.get('summary', 'No summary available'))
+    root_cause = format_ai_response(analysis.get('root_cause', 'Not determined'))
+    reproducibility = format_ai_response(analysis.get('reproducibility', 'Unknown'))
+    affected_components = format_ai_response(analysis.get('affected_components', 'Not specified'))
+    recommendation = format_ai_response(analysis.get('recommendation', 'Manual review required'))
+    
+    # Format image analysis too if it's a string
+    if isinstance(image_analysis, str):
+        img_analysis = format_ai_response(image_analysis)
+    else:
+        img_analysis = format_ai_response(image_analysis.get('analysis', 'No image analysis'))
     
     severity = analysis.get('severity', 'Unknown')
     categories = ', '.join(analysis.get('categories', ['Unknown']))
@@ -433,6 +493,15 @@ def generate_html_report(analysis, image_analysis, confidence_score, log_file, i
     priority = get_priority(confidence_score, severity)
     next_steps = generate_next_steps(analysis)
     
+    # Load external CSS file
+    css = ""
+    try:
+        with open("style.css", "r", encoding="utf-8") as css_file:
+            css = css_file.read()
+    except FileNotFoundError:
+        logger.log("WARNING", "style.css not found. Using default styles.")
+        # Add fallback styling if needed
+    
     html_content = f"""<!DOCTYPE html>
 <html>
 <head>
@@ -440,168 +509,11 @@ def generate_html_report(analysis, image_analysis, confidence_score, log_file, i
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nightly Regression Triage Report</title>
     <style>
-        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
-        body {{ 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }}
-        .container {{ 
-            max-width: 1200px; 
-            margin: 0 auto;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            overflow: hidden;
-        }}
-        .header {{
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }}
-        .header h1 {{ font-size: 32px; margin-bottom: 10px; }}
-        .header p {{ opacity: 0.9; font-size: 14px; }}
-        .alert-banner {{
-            background: {sev_color};
-            color: white;
-            padding: 15px 30px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 18px;
-        }}
-        .content {{ padding: 30px; }}
-        .metrics {{
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }}
-        .metric-card {{
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
-            text-align: center;
-        }}
-        .metric-card h3 {{ color: #666; font-size: 14px; margin-bottom: 10px; }}
-        .metric-card .value {{ font-size: 28px; font-weight: bold; color: #333; }}
-        .section {{ 
-            margin: 20px 0; 
-            padding: 25px; 
-            border-left: 5px solid #667eea;
-            background: #f8f9fa;
-            border-radius: 5px;
-        }}
-        .section h2 {{ 
-            color: #333;
-            margin-bottom: 15px;
-            font-size: 22px;
-            display: flex;
-            align-items: center;
-        }}
-        .section h2::before {{
-            content: '▶';
-            margin-right: 10px;
-            color: #667eea;
-        }}
-        .section p, .section ul {{ 
-            color: #555;
-            line-height: 1.8;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }}
-        .section ul {{
-            margin-left: 20px;
-            margin-top: 10px;
-        }}
-        .section li {{
-            margin-bottom: 8px;
-        }}
-        .summary-section {{ border-left-color: #007bff; }}
-        .root-cause-section {{ border-left-color: #dc3545; }}
-        .recommendation-section {{ border-left-color: #28a745; }}
-        .patterns-section {{ border-left-color: #ffc107; }}
-        .confidence-section {{ 
-            border-left-color: {conf_color};
-            background: linear-gradient(135deg, rgba(0,0,0,0.02), rgba(0,0,0,0.05));
-        }}
-        .confidence-score {{
-            font-size: 48px;
-            font-weight: bold;
-            color: {conf_color};
-            text-align: center;
-            margin: 20px 0;
-        }}
-        .priority-badge {{
-            display: inline-block;
-            padding: 8px 16px;
-            border-radius: 20px;
-            background: {sev_color};
-            color: white;
-            font-weight: bold;
-            margin: 10px 0;
-        }}
-        .error-patterns {{
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }}
-        .pattern-item {{
-            background: white;
-            padding: 15px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-        }}
-        .pattern-item strong {{ color: #667eea; }}
-        .next-steps {{
-            background: white;
-            padding: 20px;
-            border-radius: 5px;
-            margin-top: 15px;
-        }}
-        .next-steps ol {{
-            margin-left: 20px;
-        }}
-        .next-steps li {{
-            margin-bottom: 10px;
-            line-height: 1.6;
-        }}
-        .metadata {{
-            font-size: 12px;
-            color: #999;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 2px solid #eee;
-        }}
-        .metadata table {{
-            width: 100%;
-            margin-top: 10px;
-        }}
-        .metadata td {{
-            padding: 5px;
-        }}
-        .metadata td:first-child {{
-            font-weight: bold;
-            width: 200px;
-        }}
-        .footer {{
-            background: #f8f9fa;
-            padding: 20px 30px;
-            text-align: center;
-            color: #666;
-            font-size: 12px;
-        }}
-        .tag {{
-            display: inline-block;
-            padding: 4px 12px;
-            margin: 4px;
-            background: #667eea;
-            color: white;
-            border-radius: 12px;
-            font-size: 12px;
+        {css}
+        /* Additional style to control severity text */
+        .severity-value {{
+            font-size: 18px !important;
+            word-break: break-word;
         }}
     </style>
 </head>
@@ -609,22 +521,22 @@ def generate_html_report(analysis, image_analysis, confidence_score, log_file, i
     <div class="container">
         <div class="header">
             <h1>🔍 Nightly Regression Triage Report</h1>
-            <p>Automated AI-Powered Failure Analysis | Production Ready</p>
+            <p>Automated AI-Powered Failure Analysis </p>
         </div>
         
-        <div class="alert-banner">
+        <div class="alert-banner" style="background: {sev_color};">
             {priority} | Severity: {severity}
         </div>
         
         <div class="content">
-            <div class="metrics">
+            <div class="metrics-grid">
                 <div class="metric-card">
                     <h3>Confidence Score</h3>
                     <div class="value" style="color: {conf_color};">{confidence_score}%</div>
                 </div>
                 <div class="metric-card">
                     <h3>Severity Level</h3>
-                    <div class="value" style="color: {sev_color};">{severity}</div>
+                    <div class="value severity-value" style="color: {sev_color};">{severity}</div>
                 </div>
                 <div class="metric-card">
                     <h3>Priority</h3>
@@ -638,7 +550,7 @@ def generate_html_report(analysis, image_analysis, confidence_score, log_file, i
             
             <div class="section summary-section">
                 <h2>Executive Summary</h2>
-                <p>{analysis.get('summary', 'No summary available')}</p>
+                <div>{summary}</div>
                 <div style="margin-top: 15px;">
                     <strong>Categories:</strong><br>
                     {' '.join([f'<span class="tag">{cat}</span>' for cat in analysis.get('categories', [])])}
@@ -647,9 +559,9 @@ def generate_html_report(analysis, image_analysis, confidence_score, log_file, i
             
             <div class="section root-cause-section">
                 <h2>Root Cause Analysis</h2>
-                <p>{analysis.get('root_cause', 'Not determined')}</p>
-                <p style="margin-top: 10px;"><strong>Reproducibility:</strong> {analysis.get('reproducibility', 'Unknown')}</p>
-                <p><strong>Affected Components:</strong> {analysis.get('affected_components', 'Not specified')}</p>
+                <div>{root_cause}</div>
+                <p style="margin-top: 10px;"><strong>Reproducibility:</strong> {reproducibility}</p>
+                <p><strong>Affected Components:</strong> {affected_components}</p>
             </div>
             
             <div class="section patterns-section">
@@ -662,7 +574,7 @@ def generate_html_report(analysis, image_analysis, confidence_score, log_file, i
             <div class="section recommendation-section">
                 <h2>Recommendations & Next Steps</h2>
                 <p><strong>Primary Recommendation:</strong></p>
-                <p>{analysis.get('recommendation', 'Manual review required')}</p>
+                <div>{recommendation}</div>
                 
                 <div class="next-steps">
                     <h3 style="margin-bottom: 10px;">Action Items:</h3>
@@ -672,9 +584,9 @@ def generate_html_report(analysis, image_analysis, confidence_score, log_file, i
                 </div>
             </div>
             
-            <div class="section confidence-section">
+            <div class="section confidence-section" style="border-left-color: {conf_color};">
                 <h2>Confidence Assessment</h2>
-                <div class="confidence-score">{confidence_score}%</div>
+                <div class="confidence-score" style="color: {conf_color};">{confidence_score}%</div>
                 <p style="text-align: center;">
                     <strong>{get_recommendation_summary(confidence_score, severity)}</strong>
                 </p>
@@ -682,7 +594,12 @@ def generate_html_report(analysis, image_analysis, confidence_score, log_file, i
             
             <div class="section">
                 <h2>Full AI Analysis</h2>
-                <p style="background: white; padding: 15px; border-radius: 5px; font-family: monospace; font-size: 13px;">{log_safe}</p>
+                <div style="background: white; padding: 15px; border-radius: 5px; font-family: monospace; font-size: 13px;">{log_safe}</div>
+            </div>
+            
+            <div class="section">
+                <h2>Image Analysis</h2>
+                <div style="background: white; padding: 15px; border-radius: 5px;">{img_analysis}</div>
             </div>
             
             <div class="metadata">
@@ -692,14 +609,14 @@ def generate_html_report(analysis, image_analysis, confidence_score, log_file, i
                     <tr><td>Log File:</td><td>{log_file}</td></tr>
                     <tr><td>Log Size:</td><td>{os.path.getsize(log_file) if os.path.exists(log_file) else 0} bytes</td></tr>
                     <tr><td>Screenshot:</td><td>{image_file if image_file else 'None'}</td></tr>
-                    <tr><td>Analysis Mode:</td><td>{'DEMO MODE' if DEMO_MODE else 'LIVE API'}</td></tr>
+                    <tr><td>Analysis Mode:</td><td>LIVE API</td></tr>
                     <tr><td>Report Version:</td><td>2.0 Production</td></tr>
                 </table>
             </div>
         </div>
         
         <div class="footer">
-            <p>Mini-Triage Bot v2.0 Production | Powered by Sourcegraph Cody AI</p>
+            <p>Mini-Triage Bot v2.0 | Powered by Sourcegraph Cody AI</p>
             <p>NXP Internal Tool | Automated Nightly Regression Analysis</p>
         </div>
     </div>
@@ -728,6 +645,60 @@ def generate_pattern_html(patterns):
 def generate_steps_html(steps):
     """Generate HTML for next steps"""
     return '\n'.join([f'<li>{step}</li>' for step in steps])
+
+def generate_tailwind_pattern_html(patterns):
+    """Generate HTML for error patterns using Tailwind CSS"""
+    if not patterns:
+        return '<div class="bg-white p-3 rounded border border-gray-200 text-gray-500">No specific patterns detected</div>'
+    
+    html = ""
+    for pattern_type, items in patterns.items():
+        count = len(items) if isinstance(items, list) else 1
+        color_map = {
+            'exceptions': 'red',
+            'stack_traces': 'amber', 
+            'failed_tests': 'orange',
+            'warnings': 'yellow',
+            'timeouts': 'rose',
+            'null_pointers': 'red',
+            'connection_errors': 'purple',
+            'assertions': 'blue'
+        }
+        color = color_map.get(pattern_type, 'gray')
+        
+        html += f"""
+        <div class="bg-white p-3 rounded border border-{color}-200">
+            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-{color}-100 text-{color}-800">
+                {pattern_type.replace("_", " ").title()}
+            </span>
+            <span class="ml-2 font-semibold text-{color}-700">{count}</span>
+        </div>
+        """
+    
+    return html
+
+def generate_tailwind_steps_html(steps):
+    """Generate HTML for next steps using Tailwind CSS"""
+    return '\n'.join([f'<li class="mb-1">{step}</li>' for step in steps])
+
+def format_file_size(size_bytes):
+    """Format file size in human readable format"""
+    if size_bytes < 1024:
+        return f"{size_bytes} bytes"
+    elif size_bytes < 1024 * 1024:
+        return f"{size_bytes / 1024:.1f} KB"
+    else:
+        return f"{size_bytes / (1024 * 1024):.1f} MB"
+
+def ensure_css_file_exists():
+    """Make sure style.css exists, create with default styles if it doesn't"""
+    if not os.path.exists("style.css"):
+        logger.log("WARNING", "Creating default style.css file...")
+        with open("style.css", "w", encoding="utf-8") as f:
+            f.write("/* Default Mini-Triage Bot styles - see full style.css for complete styling */\n")
+            f.write("body { font-family: sans-serif; }\n")
+            f.write(".container { max-width: 1200px; margin: 0 auto; }\n")
+            # Add minimal fallback styles
 
 def batch_analyze_logs(log_dir=LOGS_DIR):
     """Analyze multiple log files in batch"""
@@ -885,8 +856,12 @@ def run_triage(log_file=None, image_file=None):
                 break
     
     if not log_file or not os.path.exists(log_file):
-        logger.log("ERROR", "No log file found!")
-        return None
+        logger.log("ERROR", f"No log file found at: {log_file}")
+        return {
+            'error': 'Log file not found',
+            'status': 'failed',
+            'log_file': log_file
+        }
     
     # Find image file
     if not image_file:
@@ -962,7 +937,8 @@ def run_triage(log_file=None, image_file=None):
         'priority': get_priority(confidence, analysis.get('severity', 'Unknown')),
         'categories': analysis.get('categories', []),
         'html_report': html_report,
-        'json_report': json_report
+        'json_report': json_report,
+        'status': 'success' 
     }
 
 def cleanup_old_reports(days=7):
@@ -982,28 +958,39 @@ def cleanup_old_reports(days=7):
     
     logger.log("INFO", f"Archived {archived} old report(s)")
 
-if __name__ == "__main__":
-    import argparse
+def format_ai_response(text):
+    """Format AI response text for proper HTML display"""
+    if not text:
+        return ""
     
-    parser = argparse.ArgumentParser(description='Mini-Triage Bot - Production Ready')
-    parser.add_argument('--log', help='Specific log file to analyze')
-    parser.add_argument('--image', help='Specific image file to analyze')
-    parser.add_argument('--batch', action='store_true', help='Analyze all logs in batch mode')
-    parser.add_argument('--cleanup', type=int, help='Archive reports older than N days')
-    parser.add_argument('--demo', action='store_true', help='Run in demo mode (no API calls)')
+    # First handle basic HTML escaping
+    text = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
     
-    args = parser.parse_args()
+    # Special handling for severity levels to control their size
+    text = re.sub(r'\*\*(HIGH|MEDIUM|LOW|CRITICAL)\*\*', 
+                 r'<strong style="font-size: 16px;">\1</strong>', text, flags=re.IGNORECASE)
     
-    if args.demo:
-        DEMO_MODE = True
-        logger.log("INFO", "Running in DEMO MODE")
+    # Handle markdown-style bold text with **
+    text = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', text)
     
-    if args.cleanup:
-        cleanup_old_reports(args.cleanup)
-    elif args.batch:
-        batch_analyze_logs()
-    else:
-        run_triage(args.log, args.image)
+    # Handle markdown-style headers
+    text = re.sub(r'(?m)^#+\s+(.*?)$', r'<strong class="text-lg" style="color: #0369a1; display: block; margin-top: 15px;">\1</strong>', text)
+    
+    # Handle numbered lists (like 1., 2., etc)
+    text = re.sub(r'(?m)^(\d+\.\s+)(.*?)$', r'<div style="margin-left: 15px; margin-bottom: 10px;"><span style="font-weight: bold;">\1</span>\2</div>', text)
+    
+    # Handle section markers like "SUMMARY:", "ROOT CAUSE:", etc.
+    text = re.sub(r'(?m)^([A-Z\s]+):(.*)$', r'<div style="margin-top: 15px; margin-bottom: 10px;"><span style="font-weight: bold; color: #0369a1;">\1:</span>\2</div>', text)
+    
+    # Handle code blocks
+    text = re.sub(r'```(?:python)?(.*?)```', r'<pre style="background-color: #f5f5f5; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 12px; overflow: auto;">\1</pre>', text, flags=re.DOTALL)
+    
+    # Convert double newlines to paragraph breaks
+    text = re.sub(r'\n\n+', r'</p><p>', text)
+    text = f'<p>{text}</p>'
+    text = text.replace('<p></p>', '')
+    
+    return text   
 
 def extract_relevant_context(log_content, context_lines=20):
     """Extract relevant context around ERROR and EXCEPTION keywords to reduce token count"""
@@ -1033,3 +1020,33 @@ def extract_relevant_context(log_content, context_lines=20):
         relevant_lines.append(lines[idx])
     
     return '\n'.join(relevant_lines)
+
+if __name__ == "__main__":
+    import argparse
+    
+    parser = argparse.ArgumentParser(description='Mini-Triage Bot')
+    parser.add_argument('--log', help='Specific log file to analyze')
+    parser.add_argument('--image', help='Specific image file to analyze')
+    parser.add_argument('--batch', action='store_true', help='Analyze all logs in batch mode')
+    parser.add_argument('--cleanup', type=int, help='Archive reports older than N days')
+    parser.add_argument('--api', action='store_true', help='API mode - only returns data, no console UI')
+    
+    args = parser.parse_args()
+    
+    # Only create CSS file when running in console mode, not API mode
+    if not args.api:
+        ensure_css_file_exists()
+    
+    if args.cleanup:
+        cleanup_old_reports(args.cleanup)
+    elif args.batch:
+        results = batch_analyze_logs()
+        # In API mode, just return the results, no additional printing
+        if args.api:
+            print(json.dumps(results))
+    else:
+        result = run_triage(args.log, args.image)
+        # In API mode, return JSON
+        if args.api:
+            print(json.dumps(result))
+

@@ -34,8 +34,7 @@ HEADERS = {
 
 # Configuration
 LOG_PATH = "logs/fail_log.txt"
-IMAGE_PATH = "logs/faliure.png"
-DEMO_MODE = False  # Set to True to see mock output without API calls
+IMAGE_PATH = "logs/failure.png"
 MAX_LOG_SIZE = 50000  # Maximum characters to send to API
 CONTEXT_LINES_BEFORE = 20  # Lines before ERROR/EXCEPTION
 CONTEXT_LINES_AFTER = 20   # Lines after ERROR/EXCEPTION
@@ -144,6 +143,8 @@ def call_cody_api(prompt, retry_count=0):
         
         # Collect streamed response
         full_response = ""
+        last_completion = ""
+
         for line in response.iter_lines():
             if line:
                 decoded_line = line.decode('utf-8')
@@ -154,9 +155,12 @@ def call_cody_api(prompt, retry_count=0):
                         try:
                             chunk = json.loads(data)
                             if 'completion' in chunk:
-                                full_response += chunk['completion']
+                                # Store only the complete response, not incremental
+                                last_completion = chunk['completion']
                         except json.JSONDecodeError:
                             continue
+
+        full_response = last_completion
         
         if not full_response.strip():
             raise Exception("Empty response from API")
@@ -227,11 +231,11 @@ def get_severity_from_response(text):
         return 'Low', '#28a745'
 
 def generate_html_report(log_analysis, image_analysis, key_errors):
-    """Generate an enhanced HTML report"""
+    """Generate an enhanced HTML report using Tailwind CSS"""
     # Escape HTML special characters
-    log_safe = log_analysis.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
+    log_safe = format_ai_response(log_analysis)
     img_safe = image_analysis.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
-    
+
     severity, sev_color = get_severity_from_response(log_analysis)
     
     # Calculate confidence
@@ -241,189 +245,263 @@ def generate_html_report(log_analysis, image_analysis, key_errors):
     elif 'might' in log_analysis.lower() or 'possibly' in log_analysis.lower():
         confidence = 65
     
-    conf_color = "green" if confidence >= 80 else "orange" if confidence >= 60 else "red"
+    # Map severity to Tailwind colors
+    severity_colors = {
+        'Critical': 'red',
+        'High': 'orange',
+        'Medium': 'amber',
+        'Low': 'green'
+    }
+    tw_color = severity_colors.get(severity, 'blue')
+    
+    # Map confidence to Tailwind colors
+    conf_color = 'green' if confidence >= 80 else 'amber' if confidence >= 60 else 'red'
     
     # Format key errors
     error_summary = ""
     if key_errors['exceptions']:
-        error_summary += "<h4>Top Exceptions:</h4><ul>"
+        error_summary += "<div class='font-medium text-violet-700 mt-4 mb-2'>Top Exceptions:</div><ul class='list-disc pl-5'>"
         for exc_type, exc_msg in key_errors['exceptions'][:3]:
-            error_summary += f"<li><strong>{exc_type}:</strong> {exc_msg[:100]}</li>"
+            error_summary += f"<li><span class='font-semibold'>{exc_type}:</span> {exc_msg[:100]}</li>"
         error_summary += "</ul>"
     
     if key_errors['failed_tests']:
-        error_summary += "<h4>Failed Tests:</h4><ul>"
+        error_summary += "<div class='font-medium text-violet-700 mt-4 mb-2'>Failed Tests:</div><ul class='list-disc pl-5'>"
         for status, test in key_errors['failed_tests'][:3]:
             error_summary += f"<li>{test[:100]}</li>"
         error_summary += "</ul>"
     
     if key_errors['stack_traces']:
-        error_summary += f"<p><strong>Stack Traces Found:</strong> {key_errors['stack_traces']}</p>"
+        error_summary += f"<p class='mt-3'><span class='font-semibold'>Stack Traces Found:</span> {key_errors['stack_traces']}</p>"
     
     html_content = f"""<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Triage Report - {datetime.now().strftime('%Y-%m-%d %H:%M')}</title>
-    <style>
-        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
-        body {{ 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {{
+            theme: {{
+                extend: {{
+                    colors: {{
+                        primary: {{
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985'
+                        }}
+                    }},
+                    fontFamily: {{
+                        sans: ['Inter', 'sans-serif'],
+                    }}
+                }}
+            }}
         }}
-        .container {{ 
-            max-width: 1000px; 
-            margin: 0 auto;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            overflow: hidden;
-        }}
-        .header {{
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }}
-        .header h1 {{ font-size: 28px; margin-bottom: 5px; }}
-        .header p {{ opacity: 0.9; font-size: 14px; }}
-        .alert-bar {{
-            background: {sev_color};
-            color: white;
-            padding: 15px 30px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 16px;
-        }}
-        .content {{ padding: 30px; }}
-        .metrics {{
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-bottom: 25px;
-        }}
-        .metric {{
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            border-left: 4px solid #667eea;
-        }}
-        .metric h3 {{ font-size: 12px; color: #666; margin-bottom: 8px; }}
-        .metric .value {{ font-size: 24px; font-weight: bold; color: #333; }}
-        .section {{ 
-            margin: 20px 0; 
-            padding: 20px; 
-            border-left: 5px solid #667eea;
-            background: #f8f9fa;
-            border-radius: 5px;
-        }}
-        .section h2 {{ 
-            color: #333;
-            margin-bottom: 15px;
-            font-size: 20px;
-        }}
-        .section p, .section ul {{ 
-            color: #555;
-            line-height: 1.6;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }}
-        .section ul {{ margin-left: 20px; }}
-        .section li {{ margin-bottom: 8px; }}
-        .log-analysis {{ border-left-color: #28a745; }}
-        .image-analysis {{ border-left-color: #ffc107; }}
-        .error-summary {{ border-left-color: #dc3545; }}
-        .confidence {{ 
-            font-size: 36px; 
-            font-weight: bold; 
-            color: {conf_color};
-            text-align: center;
-            margin: 20px 0;
-        }}
-        .recommendation {{
-            background: white;
-            padding: 15px;
-            border-radius: 5px;
-            margin-top: 10px;
-            border: 2px solid {conf_color};
-        }}
-        .footer {{
-            background: #f8f9fa;
-            padding: 20px;
-            text-align: center;
-            color: #666;
-            font-size: 12px;
-            border-top: 2px solid #eee;
-        }}
-        h4 {{ color: #667eea; margin: 15px 0 10px 0; }}
-    </style>
+    </script>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>🔍 Nightly Regression Triage Report</h1>
-            <p>Automated AI-Powered Analysis | {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
+<body class="bg-slate-100 min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-primary-600 to-primary-800 rounded-t-lg shadow-lg">
+            <div class="px-6 py-8 text-white">
+                <h1 class="text-3xl font-bold flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    </svg>
+                    Nightly Regression Triage Report
+                </h1>
+                <p class="mt-2 text-primary-100">Automated AI-Powered Analysis | {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
+            </div>
         </div>
         
-        <div class="alert-bar">
-            Severity: {severity} | Confidence: {confidence}%
-        </div>
-        
-        <div class="content">
-            <div class="metrics">
-                <div class="metric">
-                    <h3>Confidence</h3>
-                    <div class="value" style="color: {conf_color};">{confidence}%</div>
+        <!-- Main Content -->
+        <div class="bg-white rounded-b-lg shadow-lg">
+            <!-- Status Bar -->
+            <div class="border-b border-gray-200 bg-{tw_color}-50 px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center">
+                    <span class="inline-flex items-center rounded-md bg-{tw_color}-100 px-3 py-1 text-sm font-medium text-{tw_color}-800 ring-1 ring-inset ring-{tw_color}-600/20">
+                        Severity: {severity}
+                    </span>
+                    <span class="ml-4 inline-flex items-center rounded-md bg-{conf_color}-100 px-3 py-1 text-sm font-medium text-{conf_color}-800 ring-1 ring-inset ring-{conf_color}-600/20">
+                        Confidence: {confidence}%
+                    </span>
                 </div>
-                <div class="metric">
-                    <h3>Severity</h3>
-                    <div class="value" style="color: {sev_color};">{severity}</div>
-                </div>
-                <div class="metric">
-                    <h3>Exceptions</h3>
-                    <div class="value">{len(key_errors['exceptions'])}</div>
-                </div>
-                <div class="metric">
-                    <h3>Stack Traces</h3>
-                    <div class="value">{key_errors['stack_traces']}</div>
+                <div class="text-sm text-gray-600">
+                    {datetime.now().strftime('%A, %B %d, %Y')}
                 </div>
             </div>
             
-            <div class="section error-summary">
-                <h2>📋 Error Summary</h2>
-                {error_summary if error_summary else '<p>No specific error patterns detected</p>'}
-            </div>
-            
-            <div class="section log-analysis">
-                <h2>🤖 AI Log Analysis</h2>
-                <p>{log_safe}</p>
-            </div>
-            
-            <div class="section image-analysis">
-                <h2>🖼️ Visual Analysis</h2>
-                <p>{img_safe}</p>
-            </div>
-            
-            <div class="section">
-                <h2>📊 Confidence Assessment</h2>
-                <div class="confidence">{confidence}%</div>
-                <div class="recommendation">
-                    <strong>Recommendation:</strong> 
-                    {'This is likely a reproducible bug requiring immediate attention.' if confidence >= 80 
-                     else 'Further investigation recommended. May require manual review.' if confidence >= 60
-                     else 'Low confidence - manual review strongly recommended.'}
+            <!-- Dashboard Metrics -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-6 py-6">
+                <!-- Confidence Score -->
+                <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-{conf_color}-100 text-{conf_color}-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <h2 class="text-gray-500 text-sm font-medium">Confidence</h2>
+                            <div class="flex items-center mt-1">
+                                <span class="text-2xl font-bold text-{conf_color}-700">{confidence}%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Progress Bar -->
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 mt-3">
+                        <div class="bg-{conf_color}-600 h-2.5 rounded-full" style="width: {confidence}%"></div>
+                    </div>
+                </div>
+                
+                <!-- Severity -->
+                <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-{tw_color}-100 text-{tw_color}-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <h2 class="text-gray-500 text-sm font-medium">Severity</h2>
+                            <div class="flex items-center mt-1">
+                                <span class="text-2xl font-bold text-{tw_color}-700">{severity}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Exceptions -->
+                <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-red-100 text-red-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <h2 class="text-gray-500 text-sm font-medium">Exceptions</h2>
+                            <div class="flex items-center mt-1">
+                                <span class="text-2xl font-bold text-gray-900">{len(key_errors['exceptions'])}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Stack Traces -->
+                <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-violet-100 text-violet-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <h2 class="text-gray-500 text-sm font-medium">Stack Traces</h2>
+                            <div class="flex items-center mt-1">
+                                <span class="text-2xl font-bold text-gray-900">{key_errors['stack_traces']}</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             
-            <div class="footer">
-                <p><strong>Log File:</strong> {LOG_PATH}</p>
-                <p><strong>Screenshot:</strong> {IMAGE_PATH if os.path.exists(IMAGE_PATH) else 'None'}</p>
-                <p><strong>Analysis Mode:</strong> {'DEMO MODE' if DEMO_MODE else 'LIVE API'}</p>
-                <p style="margin-top: 10px;">Mini-Triage Bot v2.0 | Powered by Sourcegraph Cody AI</p>
+            <!-- Main Content Sections -->
+            <div class="px-6 py-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Error Summary -->
+                <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+                    <h3 class="text-lg font-semibold text-gray-800 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                        Error Summary
+                    </h3>
+                    <div class="mt-4 text-gray-700">
+                        {error_summary if error_summary else '<p>No specific error patterns detected</p>'}
+                    </div>
+                </div>
+                
+                <!-- Confidence Assessment -->
+                <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+                    <h3 class="text-lg font-semibold text-gray-800 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
+                        </svg>
+                        Confidence Assessment
+                    </h3>
+                    <div class="mt-4">
+                        <div class="flex justify-center">
+                            <div class="w-full bg-gray-200 rounded-full h-4">
+                                <div class="bg-{conf_color}-600 h-4 rounded-full transition-all duration-1000 ease-in-out" style="width: {confidence}%"></div>
+                            </div>
+                        </div>
+                        <div class="text-center mt-2 text-{conf_color}-700 text-xl font-semibold">{confidence}%</div>
+                        <div class="mt-4 p-4 border border-{conf_color}-200 rounded-lg bg-{conf_color}-50">
+                            <div class="flex items-center">
+                                <div class="text-{conf_color}-700 mr-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <span class="font-semibold">Recommendation:</span> 
+                                    {'This is likely a reproducible bug requiring immediate attention.' if confidence >= 80 
+                                    else 'Further investigation recommended. May require manual review.' if confidence >= 60
+                                    else 'Low confidence - manual review strongly recommended.'}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Analysis Sections -->
+            <div class="px-6 py-4">
+                <!-- AI Log Analysis -->
+                <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                        </svg>
+                        AI Log Analysis
+                    </h3>
+                    <div class="mt-4 text-gray-700 whitespace-pre-line">{log_safe}</div>
+                </div>
+                
+                <!-- Image Analysis -->
+                <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+                    <h3 class="text-lg font-semibold text-gray-800 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        Visual Analysis
+                    </h3>
+                    <div class="mt-4 text-gray-700">{img_safe}</div>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <div class="px-6 py-4 bg-gray-50 rounded-b-lg border-t border-gray-200">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
+                    <div>
+                        <strong>Log File:</strong> {LOG_PATH}
+                    </div>
+                    <div>
+                        <strong>Screenshot:</strong> {IMAGE_PATH if os.path.exists(IMAGE_PATH) else 'None'}
+                    </div>
+                    <div>
+                        <strong>Analysis Mode:</strong> <span class="px-2 py-1 rounded bg-blue-100 text-blue-800 text-xs font-semibold">LIVE API</span>
+                    </div>
+                </div>
+                <div class="mt-4 text-center text-xs text-gray-500">
+                    Mini-Triage Bot v2.0 | Powered by Sourcegraph Cody AI
+                </div>
             </div>
         </div>
     </div>
@@ -454,19 +532,7 @@ def analyze_nightly_failure():
     # B. ANALYZE WITH AI (Text only)
     print("[1/2] 🔍 Analyzing error log with AI...")
     try:
-        if DEMO_MODE:
-            text_response = """SUMMARY: The API endpoint /users returned a 500 Internal Server Error due to a null pointer exception in the database query layer.
-
-ROOT CAUSE: This is a code bug - specifically in the data validation layer where user input is not properly sanitized before database queries.
-
-SEVERITY: High - This affects all user-related operations and will cause test failures consistently.
-
-RECOMMENDATION: 
-1. Add null checks in the UserService.validateInput() method
-2. Implement proper error handling for database queries
-3. Add unit tests to prevent regression"""
-        else:
-            prompt = f"""You are a Senior QA Engineer analyzing a nightly regression test failure.
+        prompt = f"""You are a Senior QA Engineer analyzing a nightly regression test failure.
 
 ERROR LOG:
 {error_text}
@@ -478,8 +544,8 @@ Provide a structured analysis:
 4. RECOMMENDATION: Specific actionable steps to resolve
 
 Be concise and actionable."""
-            
-            text_response = call_cody_api(prompt)
+        
+        text_response = call_cody_api(prompt)
         
         print("✅ Log analysis complete\n")
         
@@ -490,11 +556,8 @@ Be concise and actionable."""
                 img = Image.open(IMAGE_PATH)
                 img_info = f"Screenshot captured: {img.size[0]}x{img.size[1]} pixels, {img.format}"
                 
-                if DEMO_MODE:
-                    image_response = "The screenshot shows a 500 error page with broken CSS styling. The error message is partially visible showing 'NullPointerException'. Navigation buttons appear functional but the main content area displays the error."
-                else:
-                    # Note: Cody has limited image analysis
-                    image_response = f"{img_info}\n\nNote: Image analysis not fully supported via Cody API. Screenshot saved for manual review. Visible elements suggest UI error page with stack trace."
+                # Note: Cody has limited image analysis
+                image_response = f"{img_info}\n\nScreenshot information extracted successfully. Basic metadata analysis shows this is a {img.format} image of size {img.size[0]}x{img.size[1]} pixels. For detailed visual analysis, please review the screenshot manually."
                 
                 print(f"✅ Screenshot analyzed: {img_info}\n")
             except Exception as e:
@@ -502,8 +565,9 @@ Be concise and actionable."""
                 image_response = "Image analysis skipped due to error"
         else:
             print(f"⚠️  No screenshot found at {IMAGE_PATH}\n")
-            image_response = "No screenshot available for analysis"
-        
+            print(f"⚠️  Make sure the image file is saved as {IMAGE_PATH} (note the spelling of 'failure')\n")
+            image_response = f"No screenshot found at {IMAGE_PATH}. Please check if the image exists and the path is correct."
+
         # Generate report
         print("[3/3] 📝 Generating HTML report...")
         generate_html_report(text_response, image_response, key_errors)
@@ -519,7 +583,74 @@ Be concise and actionable."""
     except Exception as e:
         error_msg = str(e)
         print(f"\n❌ ERROR: {error_msg}")
-        print("\n💡 Tip: Set DEMO_MODE = True to test without API calls")
+        print("\n💡 Tip: Check your API key or network connection")
+
+def format_file_size(size_bytes):
+    """Format file size in human readable format"""
+    if size_bytes < 1024:
+        return f"{size_bytes} bytes"
+    elif size_bytes < 1024 * 1024:
+        return f"{size_bytes / 1024:.1f} KB"
+    else:
+        return f"{size_bytes / (1024 * 1024):.1f} MB"
+    
+def format_ai_response(text):
+    """Format AI response text for proper HTML display"""
+    # First handle basic HTML escaping
+    text = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
+    
+    # Handle markdown-style bold text with **
+    text = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', text)
+    
+    # Handle markdown-style headers
+    text = re.sub(r'(?m)^#+\s+(.*?)$', r'<strong class="text-lg text-primary-700">\1</strong>', text)
+    
+    # Handle numbered lists (like 1., 2., etc)
+    text = re.sub(r'(?m)^(\d+\.\s+)(.*?)$', r'<div class="ml-4 mb-2"><span class="font-bold">\1</span>\2</div>', text)
+    
+    # Handle section markers like "SUMMARY:", "ROOT CAUSE:", etc.
+    text = re.sub(r'(?m)^([A-Z\s]+):(.*)$', r'<div class="mt-3 mb-2"><span class="font-bold text-primary-600">\1:</span>\2</div>', text)
+    
+    # Handle code blocks
+    text = re.sub(r'```(?:python)?(.*?)```', r'<pre class="bg-gray-100 p-2 rounded text-sm font-mono overflow-auto">\1</pre>', text, flags=re.DOTALL)
+    
+    return text   
+
+def health_check_api(timeout=5):
+    """Lightweight health check for the Cody API"""
+    try:
+        payload = {
+            "messages": [
+                {
+                    "speaker": "human",
+                    "text": "Health check: Respond with 'OK' if you receive this."
+                }
+            ],
+            "maxTokensToSample": 10,  # Minimal tokens for health check
+            "temperature": 0.1
+        }
+        
+        response = requests.post(
+            CODY_API_URL, 
+            headers=HEADERS, 
+            json=payload, 
+            stream=False,  # No streaming for health check
+            timeout=timeout  # Shorter timeout
+        )
+        
+        if response.status_code == 200:
+            return True, "API is operational"
+        else:
+            return False, f"API returned status code: {response.status_code}"
+            
+    except requests.exceptions.Timeout:
+        return False, "API timeout during health check"
+        
+    except requests.exceptions.RequestException as e:
+        return False, f"API request failed: {str(e)}"
+        
+    except Exception as e:
+        return False, f"Unexpected error: {str(e)}"
 
 if __name__ == "__main__":
     analyze_nightly_failure()
