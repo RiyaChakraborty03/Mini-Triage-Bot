@@ -190,7 +190,8 @@ def extract_error_patterns(log_text):
         'assertions': re.findall(r'Assert(?:ion)?(?:Error)?:\s*(.+)', log_text),
         'timeouts': re.findall(r'timeout|timed out', log_text, re.IGNORECASE),
         'null_pointers': re.findall(r'null\s*pointer|NullPointerException', log_text, re.IGNORECASE),
-        'connection_errors': re.findall(r'connection\s+(?:refused|failed|timeout)', log_text, re.IGNORECASE)
+        'connection_errors': re.findall(r'connection\s+(?:refused|failed|timeout)', log_text, re.IGNORECASE),
+        'spark_errors': re.findall(r'TaskSetManager: Lost task|PythonException|Python worker exited', log_text, re.IGNORECASE)
     }
     
     return {k: v for k, v in patterns.items() if v}
@@ -211,6 +212,8 @@ def categorize_failure(log_text, error_patterns):
         categories.append("Connection Issue")
     if error_patterns.get('assertions'):
         categories.append("Assertion Failure")
+    if error_patterns.get('spark_errors'):
+        categories.append("Spark Failure")
         
     return categories if categories else ["Unknown"]
 
@@ -235,6 +238,136 @@ def read_error_log(log_path):
         logger.log("ERROR", f"Error reading {log_path}: {str(e)}")
         return None
 
+def extract_signal_from_noise(log_text):
+    """Filter log to keep only high-value signal lines (errors, exceptions, etc.)"""
+    if not log_text:
+        return ""
+        
+    lines = log_text.split('\n')
+    signal_lines = []
+    
+    # Define signal patterns
+    signal_patterns = [
+        # NXP/Spark specific patterns
+        r'TaskSetManager: Lost task', 
+        r'PythonException',
+        r'Python worker exited',
+        r'failed with exception',
+        # Standard error patterns
+        r'ERROR',
+        r'WARN(?:ING)?',
+        r'CRITICAL',
+        r'FATAL',
+        r'Exception',
+        r'Traceback',
+        r'TypeError',
+        r'ValueError',
+        r'AssertionError',
+        r'Failed to execute',
+        r'OutOfMemory',
+        # Context lines (timestamps, headers)
+        r'^\d{4}-\d{2}-\d{2}', # Date patterns
+    ]
+    
+    # Compile all patterns
+    combined_pattern = re.compile('|'.join(signal_patterns), re.IGNORECASE)
+    
+    # Context tracking - keep lines surrounding matches
+    context_window = 10  # Lines to keep before/after a signal
+    signal_indices = set()
+    
+    # First pass - identify signal lines
+    for i, line in enumerate(lines):
+        if combined_pattern.search(line):
+            # Keep context window around the signal
+            start = max(0, i - context_window)
+            end = min(len(lines), i + context_window + 1)
+            signal_indices.update(range(start, end))
+    
+    # Second pass - extract lines in order
+    signal_lines = [lines[i] for i in sorted(signal_indices)]
+    
+    # Add headers to separate contexts
+    final_lines = []
+    last_idx = -1
+    for i in sorted(signal_indices):
+        if i > last_idx + 1:
+            final_lines.append("\n--- Context Gap ---\n")
+        final_lines.append(lines[i])
+        last_idx = i
+    
+    result = '\n'.join(final_lines)
+    
+    # Add summary header
+    summary = f"""
+Signal Extraction Summary:
+- Original lines: {len(lines)}
+- Signal lines: {len(signal_lines)}
+- Reduction: {((1 - len(signal_lines)/len(lines)) * 100):.1f}%
+"""
+    
+    logger.log("INFO", f"Extracted {len(signal_lines)} signal lines from {len(lines)} total lines")
+    return summary + result
+
+def analyze_large_log(log_path, window_size=500000, overlap=50000):
+    """Process very large logs using sliding window approach"""
+    full_size = os.path.getsize(log_path)
+    logger.log("INFO", f"Large log detected: {full_size/1024/1024:.2f}MB, using sliding window analysis")
+    
+    with open(log_path, "r", encoding="utf-8", errors='ignore') as f:
+        content = f.read()
+    
+    # Split into manageable chunks with overlap
+    chunks = []
+    chunk_results = []
+    
+    for i in range(0, len(content), window_size - overlap):
+        chunk = content[i:i + window_size]
+        if not chunk:  # Skip empty chunks
+            continue
+            
+        chunks.append(chunk)
+        logger.log("INFO", f"Processing chunk {len(chunks)} ({len(chunk)} chars)")
+        
+        # Extract signal from this chunk
+        signal = extract_signal_from_noise(chunk)
+        
+        # Quick check if there's something worth analyzing
+        has_errors = re.search(r'(ERROR|EXCEPTION|TRACEBACK|FAIL)', signal, re.IGNORECASE)
+        
+        if has_errors:
+            # Only analyze chunks that contain errors
+            logger.log("INFO", f"Chunk {len(chunks)} contains errors, performing detailed analysis")
+            
+            # Analyze this chunk
+            analysis = analyze_log(signal, f"{os.path.basename(log_path)} (chunk {len(chunks)})")
+            chunk_results.append({
+                'chunk_id': len(chunks),
+                'has_errors': True,
+                'analysis': analysis,
+                'severity': analysis.get('severity', 'Unknown')
+            })
+        else:
+            logger.log("INFO", f"Chunk {len(chunks)} contains no significant errors, skipping detailed analysis")
+            chunk_results.append({
+                'chunk_id': len(chunks),
+                'has_errors': False
+            })
+    
+    # Consolidate results, prioritizing chunks with errors
+    error_chunks = [r for r in chunk_results if r.get('has_errors', False)]
+    
+    if not error_chunks:
+        logger.log("WARNING", "No errors found in any chunk, analyzing first chunk as fallback")
+        return analyze_log(extract_signal_from_noise(chunks[0]), os.path.basename(log_path))
+    
+    # Sort by severity (Critical > High > Medium > Low)
+    severity_order = {'Critical': 0, 'High': 1, 'Medium': 2, 'Low': 3, 'Unknown': 4}
+    error_chunks.sort(key=lambda x: severity_order.get(x.get('severity', 'Unknown').split()[0], 999))
+    
+    # Return the highest severity chunk analysis
+    return error_chunks[0]['analysis']
+
 def get_confidence_score(text, error_patterns):
     """Calculate confidence score based on AI response and error patterns"""
     score = 50  # Base score
@@ -256,6 +389,8 @@ def get_confidence_score(text, error_patterns):
         score += 10
     if error_patterns.get('failed_tests'):
         score += 5
+    if error_patterns.get('spark_errors'):
+        score += 15  # Prioritize Spark errors
         
     # Decrease if uncertain language
     if "might" in text.lower() or "possibly" in text.lower() or "unclear" in text.lower():
@@ -264,17 +399,35 @@ def get_confidence_score(text, error_patterns):
     return min(max(score, 0), 100)  # Clamp between 0-100
 
 def analyze_log(error_text, log_filename):
-    """Analyze error log text with enhanced prompting"""
+    """Analyze error log text with enhanced prompting for NXP-style logs"""
     try:
         # Extract error patterns first
         error_patterns = extract_error_patterns(error_text)
         categories = categorize_failure(error_text, error_patterns)
+        
+        # Check if this is likely a Spark log
+        is_spark = (
+            'spark' in error_text.lower() or 
+            'pyspark' in error_text.lower() or 
+            'tasksetmanager' in error_text.lower() or
+            any('spark' in k for k in categories)
+        )
+        
+        # Add Spark-specific instruction
+        spark_instruction = """
+IMPORTANT FOR SPARK LOGS: 
+- A 'Clean Shutdown' or 'Exit Code 0' at the end of a file DOES NOT mean the test passed
+- Look for 'TaskSetManager: Lost task' or 'PythonException' earlier in the logs
+- If you see a Traceback, prioritize that over any 'Success' message at the end
+- Failed Spark jobs often have normal shutdown messaging, focus on error stack traces
+""" if is_spark else ""
         
         # Build context-aware prompt
         prompt = f"""You are an expert QA Engineer analyzing a nightly regression test failure.
 
 LOG FILE: {log_filename}
 DETECTED CATEGORIES: {', '.join(categories)}
+{spark_instruction}
 
 ERROR LOG:
 {error_text}
@@ -365,7 +518,7 @@ def generate_json_report(analysis, image_analysis, confidence_score, log_file, i
     report = {
         "metadata": {
             "timestamp": timestamp,
-            "report_version": "2.0",
+            "report_version": "1.0",
             "triage_bot_version": "1.0-production",
             "analysis_mode": "LIVE"
         },
@@ -572,7 +725,7 @@ def generate_html_report(analysis, image_analysis, confidence_score, log_file, i
             </div>
             
             <div class="section recommendation-section">
-                <h2>Recommendations & Next Steps</h2>
+                                <h2>Recommendations & Next Steps</h2>
                 <p><strong>Primary Recommendation:</strong></p>
                 <div>{recommendation}</div>
                 
@@ -610,13 +763,13 @@ def generate_html_report(analysis, image_analysis, confidence_score, log_file, i
                     <tr><td>Log Size:</td><td>{os.path.getsize(log_file) if os.path.exists(log_file) else 0} bytes</td></tr>
                     <tr><td>Screenshot:</td><td>{image_file if image_file else 'None'}</td></tr>
                     <tr><td>Analysis Mode:</td><td>LIVE API</td></tr>
-                    <tr><td>Report Version:</td><td>2.0 Production</td></tr>
+                    <tr><td>Report Version:</td><td>1.0 Production</td></tr>
                 </table>
             </div>
         </div>
         
         <div class="footer">
-            <p>Mini-Triage Bot v2.0 | Powered by Sourcegraph Cody AI</p>
+            <p>Mini-Triage Bot v1.0 | Powered by Sourcegraph Cody AI</p>
             <p>NXP Internal Tool | Automated Nightly Regression Analysis</p>
         </div>
     </div>
@@ -662,7 +815,8 @@ def generate_tailwind_pattern_html(patterns):
             'timeouts': 'rose',
             'null_pointers': 'red',
             'connection_errors': 'purple',
-            'assertions': 'blue'
+            'assertions': 'blue',
+            'spark_errors': 'indigo'
         }
         color = color_map.get(pattern_type, 'gray')
         
@@ -845,7 +999,7 @@ def generate_batch_summary(results):
     print(f"{'='*60}\n")
 
 def run_triage(log_file=None, image_file=None):
-    """Main triage function - enhanced for production"""
+    """Main triage function - enhanced with signal extraction and sliding window analysis"""
     logger.log("INFO", "=== Mini-Triage Bot Starting ===")
     
     # Find log file
@@ -874,13 +1028,27 @@ def run_triage(log_file=None, image_file=None):
     if image_file:
         logger.log("INFO", f"Screenshot: {image_file}")
     
-    # Read and analyze
-    error_text = read_error_log(log_file)
-    if not error_text:
-        return None
+    # Check file size to determine processing approach
+    file_size = os.path.getsize(log_file)
+    logger.log("INFO", f"Log file size: {file_size/1024/1024:.2f}MB")
     
-    logger.log("INFO", "[1/3] Analyzing error log...")
-    analysis = analyze_log(error_text, os.path.basename(log_file))
+    # Use sliding window for very large logs
+    if file_size > 10 * 1024 * 1024:  # 10MB threshold
+        logger.log("INFO", "Using sliding window analysis for large log")
+        analysis = analyze_large_log(log_file)
+    else:
+        # For smaller logs, read and extract signal
+        error_text = read_error_log(log_file)
+        if not error_text:
+            return None
+            
+        # Extract signal from noise before analysis
+        logger.log("INFO", "Extracting signal from log")
+        signal = extract_signal_from_noise(error_text)
+        
+        logger.log("INFO", "[1/3] Analyzing error log...")
+        analysis = analyze_log(signal, os.path.basename(log_file))
+    
     logger.log("INFO", "Log analysis complete")
     
     logger.log("INFO", "[2/3] Analyzing screenshot...")
@@ -974,13 +1142,13 @@ def format_ai_response(text):
     text = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', text)
     
     # Handle markdown-style headers
-    text = re.sub(r'(?m)^#+\s+(.*?)$', r'<strong class="text-lg" style="color: #0369a1; display: block; margin-top: 15px;">\1</strong>', text)
+    text = re.sub(r'(?m)^#+\s+(.*?)```', r'<strong class="text-lg" style="color: #0369a1; display: block; margin-top: 15px;">\1</strong>', text)
     
     # Handle numbered lists (like 1., 2., etc)
-    text = re.sub(r'(?m)^(\d+\.\s+)(.*?)$', r'<div style="margin-left: 15px; margin-bottom: 10px;"><span style="font-weight: bold;">\1</span>\2</div>', text)
+    text = re.sub(r'(?m)^(\d+\.\s+)(.*?)```', r'<div style="margin-left: 15px; margin-bottom: 10px;"><span style="font-weight: bold;">\1</span>\2</div>', text)
     
     # Handle section markers like "SUMMARY:", "ROOT CAUSE:", etc.
-    text = re.sub(r'(?m)^([A-Z\s]+):(.*)$', r'<div style="margin-top: 15px; margin-bottom: 10px;"><span style="font-weight: bold; color: #0369a1;">\1:</span>\2</div>', text)
+    text = re.sub(r'(?m)^([A-Z\s]+):(.*)```', r'<div style="margin-top: 15px; margin-bottom: 10px;"><span style="font-weight: bold; color: #0369a1;">\1:</span>\2</div>', text)
     
     # Handle code blocks
     text = re.sub(r'```(?:python)?(.*?)```', r'<pre style="background-color: #f5f5f5; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 12px; overflow: auto;">\1</pre>', text, flags=re.DOTALL)

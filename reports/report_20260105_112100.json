@@ -1,0 +1,45 @@
+{
+  "metadata": {
+    "timestamp": "2026-01-05T11:21:00.398701",
+    "report_version": "1.0",
+    "triage_bot_version": "1.0-production",
+    "analysis_mode": "LIVE"
+  },
+  "files": {
+    "log_file": "logs\\fail_log.txt",
+    "log_size": 12969005,
+    "image_file": null,
+    "log_hash": "8a924cb67e95549add3d2656ca2fa919"
+  },
+  "analysis": {
+    "summary": "The Spark Streaming test failed due to a **Python serialization/deserialization error** when using PyPy 3.11. The error occurs during pickle deserialization in the worker process: `TypeError: expected str, got int object` at `pickle.py line 1603 in load_reduce`. This failure is consistent across multiple streaming jobs (stages 0.0, 1.0, and subsequent jobs), causing all tasks to abort.\n\n## 2. ROOT CAUSE\nThis is a **compatibility issue between cloudpickle serialization and PyPy 3.11**. The root cause is:\n\n- The error occurs in PyPy's pickle implementation (`/usr/local/pypy/pypy3.11/lib/pypy3.11/pickle.py`) during `load_reduce` when attempting to deserialize a Python function/object\n- The traceback shows the failure happens when reading the command in `pyspark/worker.py` → `worker_util.py` → `serializers.py` → `cloudpickle.loads()`\n- The specific error \"expected str, got int object\" suggests a type mismatch in the pickled data structure, likely due to differences in how PyPy 3.11 handles pickle protocol compared to CPython\n- This is an **environmental/compatibility problem**, not a code bug in the test itself, as the test infrastructure (StreamingContextTests) appears to be functioning normally up until the deserialization point\n\n## 3. SEVERITY\n**HIGH** - Justification:\n- Blocks all Spark Streaming tests on PyPy 3.11\n- 100% failure rate (every task in every stage fails with the same error)\n- Affects core functionality (Python-Spark worker communication)\n- This is a regression test suite failure, indicating potential production impact for PyPy users\n- The issue is systematic, not isolated to a single test case\n\n## 4. RECOMMENDATION\nImmediate actions:",
+    "root_cause": "This is a **compatibility issue between cloudpickle serialization and PyPy 3.11**. The root cause is:\n\n- The error occurs in PyPy's pickle implementation (`/usr/local/pypy/pypy3.11/lib/pypy3.11/pickle.py`) during `load_reduce` when attempting to deserialize a Python function/object\n- The traceback shows the failure happens when reading the command in `pyspark/worker.py` → `worker_util.py` → `serializers.py` → `cloudpickle.loads()`\n- The specific error \"expected str, got int object\" suggests a type mismatch in the pickled data structure, likely due to differences in how PyPy 3.11 handles pickle protocol compared to CPython\n- This is an **environmental/compatibility problem**, not a code bug in the test itself, as the test infrastructure (StreamingContextTests) appears to be functioning normally up until the deserialization point\n\n## 3. SEVERITY\n**HIGH** - Justification:\n- Blocks all Spark Streaming tests on PyPy 3.11\n- 100% failure rate (every task in every stage fails with the same error)\n- Affects core functionality (Python-Spark worker communication)\n- This is a regression test suite failure, indicating potential production impact for PyPy users\n- The issue is systematic, not isolated to a single test case\n\n## 4. RECOMMENDATION\nImmediate actions:",
+    "severity": "**HIGH** - Justification:\n- Blocks all Spark Streaming tests on PyPy 3.11\n- 100% failure rate (every task in every stage fails with the same error)\n- Affects core functionality (Python-Spark worker communication)\n- This is a regression test suite failure, indicating potential production impact for PyPy users\n- The issue is systematic, not isolated to a single test case\n\n## 4. RECOMMENDATION\nImmediate actions:",
+    "recommendation": "Immediate actions:",
+    "affected_components": "- **PySpark Worker Process**: Serialization/deserialization layer (`pyspark/worker.py`, `pyspark/serializers.py`)\n- **Spark Streaming**: All streaming jobs using Python transformations\n- **Python-JVM Bridge**: Communication between Spark driver and Python workers\n- **Test Suite**: StreamingContextTests and likely all PySpark streaming tests\n- **Runtime Environment**: PyPy 3.11 interpreter specifically\n\n## 6. REPRODUCIBILITY\n**Highly Reproducible (100%)**\n\nEvidence:\n- The error occurs consistently across multiple stages (0.0, 1.0, and continuing)\n- Every task fails with the identical error signature\n- The failure happens at the same point in the execution flow (during command deserialization in worker initialization)\n- No successful tasks were executed after the streaming context started\n- The pattern repeats across multiple streaming job batches (timestamps 1767540115900, 1767540116900, etc.)\n\nThis is **not flakiness** but a deterministic failure due to the PyPy 3.11 environment. The issue will reproduce on every test run with this configuration until the underlying compatibility problem is resolved.",
+    "reproducibility": "**Highly Reproducible (100%)**\n\nEvidence:\n- The error occurs consistently across multiple stages (0.0, 1.0, and continuing)\n- Every task fails with the identical error signature\n- The failure happens at the same point in the execution flow (during command deserialization in worker initialization)\n- No successful tasks were executed after the streaming context started\n- The pattern repeats across multiple streaming job batches (timestamps 1767540115900, 1767540116900, etc.)\n\nThis is **not flakiness** but a deterministic failure due to the PyPy 3.11 environment. The issue will reproduce on every test run with this configuration until the underlying compatibility problem is resolved.",
+    "categories": [
+      "Exception/Error",
+      "Test Failure",
+      "Spark Failure"
+    ],
+    "error_patterns": {
+      "exceptions": 28,
+      "stack_traces": 278,
+      "failed_tests": 14,
+      "spark_errors": 26
+    }
+  },
+  "image_analysis": "No image analysis",
+  "confidence_score": 100,
+  "priority": "P1 - High",
+  "recommendation_summary": "Review and address soon - Likely reproducible issue",
+  "next_steps": [
+    "1. Notify development team immediately",
+    "2. Create high-priority bug ticket",
+    "3. Assign to development team for code fix",
+    "4. Add regression test to prevent recurrence",
+    "5. Re-run test to verify fix",
+    "6. Update test documentation if needed"
+  ]
+}

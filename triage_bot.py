@@ -500,7 +500,7 @@ def generate_html_report(log_analysis, image_analysis, key_errors):
                     </div>
                 </div>
                 <div class="mt-4 text-center text-xs text-gray-500">
-                    Mini-Triage Bot v2.0 | Powered by Sourcegraph Cody AI
+                    Mini-Triage Bot v1.0 | Powered by Sourcegraph Cody AI
                 </div>
             </div>
         </div>
